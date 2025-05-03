@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>500 - Server Error</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>500 - Something Went Wrong 😓</h1>
+    <p>We’re sorry, but something broke on our side.</p>
+    <a href="{{ url_for('index') }}">Try Again</a>
+</body>
+</html>

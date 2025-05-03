@@ -1,5 +1,5 @@
 from flask import Flask, redirect, render_template, request, url_for
-from blog_data import load_posts, save_posts
+from blog_data import fetch_post_by_id, load_posts, update_posts, save_posts
 
 app = Flask(__name__)
 
@@ -30,6 +30,48 @@ def add():
 
         return redirect(url_for('index'))
     return render_template('add.html')
+
+
+@app.route('/delete/<int:post_id>', methods= ['POST'])
+def delete(post_id):
+    blog_posts = load_posts()
+    updated_posts = [post for post in blog_posts if post["id"] != post_id]
+    save_posts(updated_posts)
+    return redirect(url_for('index'))
+
+
+@app.route('/update/<int:post_id>', methods= ['GET', 'POST'])
+def update(post_id):
+    post = fetch_post_by_id(post_id)
+    if post is None:
+        return "Post not found", 404
+
+    if request.method == 'POST':
+        author = request.form.get("author")
+        title = request.form.get('title')
+        content = request.form.get('content')
+
+        updated_post = {
+            "id": post_id,
+            "author": author,
+            "title": title,
+            "content": content
+        }
+
+        update_posts(updated_post,post_id)
+
+        return redirect(url_for('index')) # Redirect back to index
+
+    return render_template('update.html', post=post)
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('500.html'), 500
 
 
 
